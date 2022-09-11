@@ -17,7 +17,7 @@ public class HealthCollectible : MonoBehaviour
                 ruby.ChangeHP(hpRestore);
                 Destroy(gameObject);
             }
-            
+        
         }
     }
 }

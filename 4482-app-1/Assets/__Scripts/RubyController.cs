@@ -7,8 +7,13 @@ public class RubyController : MonoBehaviour
     public float movementSpeed = 4.0f;
 
     public float maxHp = 100;
+    public float invulnerabilityWindow = 1.0f;
+
     public float hp { get {return currentHp; }}
     float currentHp;
+
+    bool isInvulnerable;
+    float lastInvulnerableTime;
 
     Rigidbody2D rigidbody2d;
     float horizontal;
@@ -27,6 +32,8 @@ public class RubyController : MonoBehaviour
     {
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
+
+        isInvulnerable = Time.time < lastInvulnerableTime + invulnerabilityWindow;
     }
 
     void FixedUpdate()
@@ -40,7 +47,15 @@ public class RubyController : MonoBehaviour
 
     public void ChangeHP(float change)
     {
+        if (change < 0)
+        {
+            if (isInvulnerable) return;
+            
+            lastInvulnerableTime = Time.time;
+        }
+
         currentHp = Mathf.Clamp(currentHp + change, 0, maxHp);
+        Debug.Log(currentHp);
         
         //if (currentHp =0)
         //{

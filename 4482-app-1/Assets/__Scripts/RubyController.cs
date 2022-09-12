@@ -8,7 +8,7 @@ public class RubyController : MonoBehaviour
 
     public float maxHp = 100;
     public float invulnerabilityWindow = 1.0f;
-    public float launchDelay = 0.3f;
+    public float launchDelay = 1.0f;
 
     public GameObject projectilePrefab;
 
@@ -54,8 +54,9 @@ public class RubyController : MonoBehaviour
 
         isInvulnerable = Time.time < lastInvulnerableTime + invulnerabilityWindow;
 
-        if (Time.time > lastLaunchTime + launchDelay && Input.GetButtonDown("Fire1"))
+        if ((Time.time > lastLaunchTime + launchDelay) && Input.GetButtonDown("Fire1"))
         {
+            lastLaunchTime = Time.time;
             Launch();
         }
     }

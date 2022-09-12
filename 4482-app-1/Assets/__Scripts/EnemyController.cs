@@ -13,6 +13,7 @@ public class EnemyController : MonoBehaviour
     Animator animator;
     float lastFlippedTime;
     int direction = 1;
+    bool broken = true;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,8 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (!broken) return;
+
         if (Time.time > lastFlippedTime + flipWindow)
         {
             direction = -direction;
@@ -32,6 +35,8 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!broken) return;
+
         Vector2 position = rigidbody2D.position;
         if (vertical)
         {
@@ -57,5 +62,11 @@ public class EnemyController : MonoBehaviour
         {
             ruby.ChangeHP(-contactDamage);
         }
+    }
+
+    public void Fix()
+    {
+        broken = false;
+        rigidbody2D.simulated = false;
     }
 }

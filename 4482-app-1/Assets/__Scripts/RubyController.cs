@@ -8,12 +8,17 @@ public class RubyController : MonoBehaviour
 
     public float maxHp = 100;
     public float invulnerabilityWindow = 1.0f;
+    public float launchDelay = 0.3f;
 
+    public GameObject projectilePrefab;
+
+    [HideInInspector]
     public float hp { get {return currentHp; }}
     float currentHp;
 
     bool isInvulnerable;
     float lastInvulnerableTime;
+    float lastLaunchTime;
 
     Rigidbody2D rigidbody2d;
     Animator animator;
@@ -48,6 +53,11 @@ public class RubyController : MonoBehaviour
         animator.SetFloat("Speed", move.magnitude);
 
         isInvulnerable = Time.time < lastInvulnerableTime + invulnerabilityWindow;
+
+        if (Time.time > lastLaunchTime + launchDelay && Input.GetButtonDown("Fire1"))
+        {
+            Launch();
+        }
     }
 
     void FixedUpdate()
@@ -77,5 +87,15 @@ public class RubyController : MonoBehaviour
         //{
 
         //}
+    }
+
+    void Launch()
+    {
+        GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+
+        Projectile projectile = projectileObject.GetComponent<Projectile>();
+        projectile.Launch(lookDirection, 300);
+
+        animator.SetTrigger("Launch");
     }
 }

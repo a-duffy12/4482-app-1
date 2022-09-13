@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthCollectible : MonoBehaviour
+public class AmmoCollectible : MonoBehaviour
 {
-    public float hpRestore = 25;
+    public int ammoSupply = 10;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -12,9 +12,9 @@ public class HealthCollectible : MonoBehaviour
 
         if (ruby != null)
         {
-            if (ruby.hp < ruby.maxHp)
+            if (ruby.ammo < ruby.maxAmmo)
             {
-                ruby.ChangeHP(hpRestore);
+                ruby.GiveAmmo(ammoSupply);
                 Destroy(gameObject);
             }
         }

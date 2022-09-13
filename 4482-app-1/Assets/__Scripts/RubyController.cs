@@ -7,18 +7,29 @@ public class RubyController : MonoBehaviour
     public float movementSpeed = 4.0f;
 
     public float maxHp = 100;
-    public float invulnerabilityWindow = 1.0f;
-    public float launchDelay = 1.0f;
+    public float invulnerabilityWindow = 0.5f;
+    public float fireRate = 1.0f;
+    public int maxAmmo = 12;
 
     public GameObject projectilePrefab;
 
     [HideInInspector]
-    public float hp { get {return currentHp; }}
+    public float hp { get { return currentHp; }}
     float currentHp;
+
+    [HideInInspector]
+    public float ammo { get { return currentAmmo; }}
+    float currentAmmo;
 
     bool isInvulnerable;
     float lastInvulnerableTime;
     float lastLaunchTime;
+
+    bool overdrive;
+    float lastOverdriveTime;
+    float overdriveDuration;
+    float overdriveSpeedMod = 1f;
+    float overdriveFireRateMod = 1f;
 
     Rigidbody2D rigidbody2d;
     Animator animator;
@@ -33,6 +44,7 @@ public class RubyController : MonoBehaviour
         animator = GetComponent<Animator>();
 
         currentHp = maxHp;
+        currentAmmo = maxAmmo;
     }
 
     // Update is called once per frame
@@ -53,19 +65,38 @@ public class RubyController : MonoBehaviour
         animator.SetFloat("Speed", move.magnitude);
 
         isInvulnerable = Time.time < lastInvulnerableTime + invulnerabilityWindow;
+        overdrive = Time.time < lastOverdriveTime + overdriveDuration;
 
-        if ((Time.time > lastLaunchTime + launchDelay) && Input.GetButtonDown("Fire1"))
+        if (overdrive)
         {
-            lastLaunchTime = Time.time;
-            Launch();
+            overdriveSpeedMod = 1.3f;
+            overdriveFireRateMod = 0.3f;
+        }
+        else
+        {
+            overdriveSpeedMod = 1f;
+            overdriveFireRateMod = 1f;
+        }
+
+        if (Input.GetButtonDown("Launch"))
+        {
+            if ((Time.time > lastLaunchTime + ((1/fireRate) * overdriveFireRateMod)) && currentAmmo > 0)
+            {
+                lastLaunchTime = Time.time;
+                if (!overdrive)
+                {
+                    currentAmmo--;
+                }
+                Launch();
+            }
         }
     }
 
     void FixedUpdate()
     {
         Vector2 position = rigidbody2d.position;
-        position.x = position.x + movementSpeed * horizontal * Time.deltaTime;
-        position.y = position.y + movementSpeed * vertical * Time.deltaTime;
+        position.x = position.x + movementSpeed * horizontal * Time.deltaTime * overdriveSpeedMod;
+        position.y = position.y + movementSpeed * vertical * Time.deltaTime * overdriveSpeedMod;
 
         rigidbody2d.MovePosition(position);
     }
@@ -82,7 +113,6 @@ public class RubyController : MonoBehaviour
         }
 
         currentHp = Mathf.Clamp(currentHp + change, 0, maxHp);
-        Debug.Log(currentHp);
         
         //if (currentHp =0)
         //{
@@ -98,5 +128,19 @@ public class RubyController : MonoBehaviour
         projectile.Launch(lookDirection, 300);
 
         animator.SetTrigger("Launch");
+    }
+
+    public void GiveAmmo(int count)
+    {
+        if (count > 0)
+        {
+            currentAmmo = Mathf.Clamp(currentAmmo + count, 0, maxAmmo);
+        }
+    }
+
+    public void Overdrive(float duration)
+    {
+        lastOverdriveTime = Time.time;
+        overdriveDuration = duration;
     }
 }

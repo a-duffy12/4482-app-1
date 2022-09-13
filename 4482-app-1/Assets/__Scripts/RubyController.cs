@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RubyController : MonoBehaviour
 {
@@ -86,6 +87,7 @@ public class RubyController : MonoBehaviour
                 if (!overdrive)
                 {
                     currentAmmo--;
+                    UiAmmoSlider.instance.SetSize(currentAmmo/(float)maxAmmo);
                 }
                 Launch();
             }
@@ -115,10 +117,10 @@ public class RubyController : MonoBehaviour
         currentHp = Mathf.Clamp(currentHp + change, 0, maxHp);
         UiHpSlider.instance.SetSize(currentHp/maxHp);
         
-        //if (currentHp =0)
-        //{
-
-        //}
+        if (currentHp == 0)
+        {
+            SceneManager.LoadScene("Main");
+        }
     }
 
     void Launch()
@@ -136,6 +138,7 @@ public class RubyController : MonoBehaviour
         if (count > 0)
         {
             currentAmmo = Mathf.Clamp(currentAmmo + count, 0, maxAmmo);
+            UiAmmoSlider.instance.SetSize(currentAmmo/(float)maxAmmo);
         }
     }
 

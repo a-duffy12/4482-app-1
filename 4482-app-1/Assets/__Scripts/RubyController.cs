@@ -13,6 +13,7 @@ public class RubyController : MonoBehaviour
     public int maxAmmo = 12;
 
     public GameObject projectilePrefab;
+    public GameObject overdriveOverlay;
 
     [HideInInspector]
     public float hp { get { return currentHp; }}
@@ -70,13 +71,18 @@ public class RubyController : MonoBehaviour
 
         if (overdrive)
         {
-            overdriveSpeedMod = 1.3f;
-            overdriveFireRateMod = 0.3f;
+            overdriveSpeedMod = 1.5f;
+            overdriveFireRateMod = 0.25f;
         }
         else
         {
             overdriveSpeedMod = 1f;
             overdriveFireRateMod = 1f;
+            
+            if (overdriveOverlay.activeInHierarchy)
+            {
+                overdriveOverlay.SetActive(false);
+            }
         }
 
         if (Input.GetButtonDown("Launch"))
@@ -146,5 +152,6 @@ public class RubyController : MonoBehaviour
     {
         lastOverdriveTime = Time.time;
         overdriveDuration = duration;
+        overdriveOverlay.SetActive(true);
     }
 }

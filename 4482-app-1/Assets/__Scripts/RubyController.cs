@@ -113,6 +113,7 @@ public class RubyController : MonoBehaviour
         }
 
         currentHp = Mathf.Clamp(currentHp + change, 0, maxHp);
+        UiHpSlider.instance.SetSize(currentHp/maxHp);
         
         //if (currentHp =0)
         //{
